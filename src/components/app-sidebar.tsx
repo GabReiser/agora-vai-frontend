@@ -14,7 +14,7 @@ const items = [
 export function AppSidebar() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-border bg-sidebar text-sidebar-foreground">
+    <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-border bg-sidebar text-sidebar-foreground sticky top-0 h-screen overflow-y-auto">
       <div className="px-6 py-5 flex items-center gap-2">
         <div className="size-9 rounded-xl gradient-primary grid place-items-center text-primary-foreground shadow-sm">
           <Sprout className="size-5" />
