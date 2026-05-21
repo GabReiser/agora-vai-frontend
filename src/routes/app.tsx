@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { AppTopbar } from "@/components/app-topbar";
 import { GamificationProvider } from "@/components/gamification-provider";
+import { ChatAssistant } from "@/components/chat-assistant";
 import { authService, type User } from "@/services/auth";
 
 export const Route = createFileRoute("/app")({
@@ -43,6 +44,7 @@ function AppLayout() {
             <Outlet />
           </main>
         </div>
+        <ChatAssistant />
       </div>
     </GamificationProvider>
   );

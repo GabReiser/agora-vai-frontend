@@ -37,6 +37,11 @@ export const transactionsService = {
     store = [tx, ...store];
     return request("POST", "/transactions", tx);
   },
+  async createMany(inputs: Array<Omit<Transaction, "id">>): Promise<Transaction[]> {
+    const created = inputs.map((input, i) => ({ ...input, id: `t${Date.now()}_${i}` }));
+    store = [...created, ...store];
+    return request("POST", "/transactions/bulk", created, 350);
+  },
   async remove(id: string): Promise<void> {
     store = store.filter((t) => t.id !== id);
     await request("DELETE", `/transactions/${id}`, null, 150);
