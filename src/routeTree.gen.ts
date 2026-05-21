@@ -15,6 +15,7 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppRankingRouteImport } from './routes/app.ranking'
 import { Route as AppLancamentosRouteImport } from './routes/app.lancamentos'
 import { Route as AppInsightsRouteImport } from './routes/app.insights'
 import { Route as AppConfiguracoesRouteImport } from './routes/app.configuracoes'
@@ -50,6 +51,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRankingRoute = AppRankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppLancamentosRoute = AppLancamentosRouteImport.update({
   id: '/lancamentos',
   path: '/lancamentos',
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/insights': typeof AppInsightsRoute
   '/app/lancamentos': typeof AppLancamentosRoute
+  '/app/ranking': typeof AppRankingRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/insights': typeof AppInsightsRoute
   '/app/lancamentos': typeof AppLancamentosRoute
+  '/app/ranking': typeof AppRankingRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/insights': typeof AppInsightsRoute
   '/app/lancamentos': typeof AppLancamentosRoute
+  '/app/ranking': typeof AppRankingRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/app/configuracoes'
     | '/app/insights'
     | '/app/lancamentos'
+    | '/app/ranking'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/app/configuracoes'
     | '/app/insights'
     | '/app/lancamentos'
+    | '/app/ranking'
     | '/app'
   id:
     | '__root__'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/app/configuracoes'
     | '/app/insights'
     | '/app/lancamentos'
+    | '/app/ranking'
     | '/app/'
   fileRoutesById: FileRoutesById
 }
@@ -197,6 +209,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/ranking': {
+      id: '/app/ranking'
+      path: '/ranking'
+      fullPath: '/app/ranking'
+      preLoaderRoute: typeof AppRankingRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/lancamentos': {
       id: '/app/lancamentos'
       path: '/lancamentos'
@@ -233,6 +252,7 @@ interface AppRouteChildren {
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppInsightsRoute: typeof AppInsightsRoute
   AppLancamentosRoute: typeof AppLancamentosRoute
+  AppRankingRoute: typeof AppRankingRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -241,6 +261,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppInsightsRoute: AppInsightsRoute,
   AppLancamentosRoute: AppLancamentosRoute,
+  AppRankingRoute: AppRankingRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

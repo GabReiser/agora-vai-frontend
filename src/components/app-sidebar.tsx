@@ -1,11 +1,12 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, ArrowLeftRight, Repeat, Sparkles, Settings, Sprout } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, Repeat, Sparkles, Settings, Sprout, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/app/lancamentos", label: "Lançamentos", icon: ArrowLeftRight },
   { to: "/app/assinaturas", label: "Assinaturas", icon: Repeat },
+  { to: "/app/ranking", label: "Ranking & Missões", icon: Trophy },
   { to: "/app/insights", label: "Insights", icon: Sparkles, pro: true },
   { to: "/app/configuracoes", label: "Configurações", icon: Settings },
 ];
