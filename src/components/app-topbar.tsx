@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Bell, LogOut, User as UserIcon, Zap } from "lucide-react";
+import { Bell, LogOut, Moon, Sun, User as UserIcon, Zap } from "lucide-react";
+import { useTheme } from "@/lib/theme";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -63,6 +64,8 @@ function XpProgress() {
 
 export function AppTopbar({ user, title }: { user: User; title: string }) {
   const nav = useNavigate();
+  const { theme, toggle } = useTheme();
+  const isDark = theme === "dark";
   const isPro = user.plan === "pro";
   return (
     <header className="h-16 border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30 flex items-center px-4 md:px-8 gap-4">
@@ -103,6 +106,10 @@ export function AppTopbar({ user, title }: { user: User; title: string }) {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => nav({ to: "/app/configuracoes" })}>
               <UserIcon className="size-4" /> Configurações
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); toggle(); }}>
+              {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+              {isDark ? "Modo claro" : "Modo escuro"}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={async () => { await authService.logout(); nav({ to: "/login" }); }}
