@@ -1,0 +1,45 @@
+import { createFileRoute, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { AppSidebar } from "@/components/app-sidebar";
+import { AppTopbar } from "@/components/app-topbar";
+import { authService, type User } from "@/services/auth";
+
+export const Route = createFileRoute("/app")({
+  component: AppLayout,
+});
+
+const titles: Record<string, string> = {
+  "/app": "Dashboard",
+  "/app/lancamentos": "Lançamentos",
+  "/app/assinaturas": "Assinaturas",
+  "/app/insights": "Insights",
+  "/app/configuracoes": "Configurações",
+};
+
+function AppLayout() {
+  const nav = useNavigate();
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const u = authService.current();
+    if (!u) { nav({ to: "/login" }); return; }
+    setUser(u);
+  }, [nav]);
+
+  if (!user) return null;
+
+  const title = titles[path] ?? "Agora Vai";
+
+  return (
+    <div className="min-h-screen flex bg-background">
+      <AppSidebar />
+      <div className="flex-1 flex flex-col min-w-0">
+        <AppTopbar user={user} title={title} />
+        <main className="flex-1 p-4 md:p-8">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+}
