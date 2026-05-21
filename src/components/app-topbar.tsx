@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Bell, LogOut, User as UserIcon, Zap } from "lucide-react";
+import { Bell, LogOut, Moon, Sun, User as UserIcon, Zap } from "lucide-react";
+import { useTheme } from "@/lib/theme";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
