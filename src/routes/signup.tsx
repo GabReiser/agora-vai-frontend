@@ -41,18 +41,8 @@ function Signup() {
     throw lastError;
   }
 
-  async function handleGoogleSignup() {
-    // TODO: integrar Firebase signInWithPopup(auth, new GoogleAuthProvider())
-    toast.info("Login com Google em breve.");
-  }
-  async function handleMicrosoftSignup() {
-    // TODO: integrar Firebase signInWithPopup(auth, new OAuthProvider('microsoft.com'))
-    toast.info("Login com Microsoft em breve.");
-  }
-  async function handleAppleSignup() {
-    // TODO: integrar Firebase signInWithPopup(auth, new OAuthProvider('apple.com'))
-    toast.info("Login com Apple em breve.");
-  }
+
+
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
