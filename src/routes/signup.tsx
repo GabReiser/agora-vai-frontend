@@ -111,28 +111,11 @@ function Signup() {
             <p className="text-sm text-muted-foreground mt-1">Leva menos de 1 minuto.</p>
           </div>
 
-          {/* Social Login */}
-          <div className="grid grid-cols-3 gap-2">
-            <Button type="button" variant="outline" onClick={handleGoogleSignup}
-              className="h-11 bg-card/40 border-border/60 hover:bg-card/80 hover:border-primary/40">
-              <GoogleIcon />
-            </Button>
-            <Button type="button" variant="outline" onClick={handleMicrosoftSignup}
-              className="h-11 bg-card/40 border-border/60 hover:bg-card/80 hover:border-primary/40">
-              <MicrosoftIcon />
-            </Button>
-            <Button type="button" variant="outline" onClick={handleAppleSignup}
-              className="h-11 bg-card/40 border-border/60 hover:bg-card/80 hover:border-primary/40">
-              <AppleIcon />
-            </Button>
+          <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-card/40 px-3 py-2 text-xs text-muted-foreground">
+            <Mail className="size-4 text-primary" />
+            <span>Cadastro com e-mail e senha. Para login social, use a tela de <Link to="/login" className="text-primary hover:underline">entrar</Link>.</span>
           </div>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border/60" /></div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">ou continue com</span>
-            </div>
-          </div>
 
           <div className="space-y-2">
             <Label htmlFor="name">Nome</Label>
