@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sprout } from "lucide-react";
 import { toast } from "sonner";
-import { authService } from "@/services/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/config/firebase";
+import { fetchWithAuth } from "@/lib/api";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Entrar — Agora Vai" }] }),
@@ -18,15 +20,26 @@ function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  type UserProfileResponse = {
+    name?: string;
+    isAdmin?: boolean;
+  };
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     try {
-      const user = await authService.login(email, password);
-      toast.success(`Bem-vinda(o) de volta, ${user.name}!`);
-      nav({ to: user.isAdmin ? "/admin" : "/app" });
-    } catch {
-      toast.error("Erro ao entrar.");
+      await signInWithEmailAndPassword(auth, email, password);
+
+      const profile = await fetchWithAuth<UserProfileResponse>("/users/me");
+      console.log("Resposta do back-end (/users/me):", profile);
+
+      toast.success(`Bem-vinda(o) de volta${profile?.name ? `, ${profile.name}` : ""}!`);
+      nav({ to: profile?.isAdmin ? "/admin" : "/app" });
+    } catch (error) {
+      console.error("Falha no fluxo de login:", error);
+      const message = error instanceof Error ? error.message : "Erro ao entrar.";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
