@@ -9,6 +9,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/firebase";
 import { fetchWithAuth } from "@/lib/api";
 import { useAuth, type BackendProfile } from "@/contexts/AuthContext";
+import { SocialAuthButtons } from "@/components/social-auth-buttons";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Entrar — Agora Vai" }] }),
