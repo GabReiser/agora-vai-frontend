@@ -9,6 +9,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/firebase";
 import { fetchWithAuth } from "@/lib/api";
 import { useAuth, type BackendProfile } from "@/contexts/AuthContext";
+import { SocialAuthButtons } from "@/components/social-auth-buttons";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Entrar — Agora Vai" }] }),
@@ -88,6 +89,7 @@ function Login() {
             <h1 className="font-display text-3xl font-bold tracking-tight">Entrar</h1>
             <p className="text-sm text-muted-foreground mt-1">Acesse sua conta para continuar.</p>
           </div>
+          <SocialAuthButtons dividerLabel="ou entre com e-mail" />
           <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
             <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" />
