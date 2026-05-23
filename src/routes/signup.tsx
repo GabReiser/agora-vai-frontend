@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sprout, Eye, EyeOff, Trophy, TrendingUp, Sparkles } from "lucide-react";
+import { Sprout, Eye, EyeOff, Trophy, TrendingUp, Sparkles, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/firebase";
