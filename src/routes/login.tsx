@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/firebase";
 import { fetchWithAuth } from "@/lib/api";
+import { useAuth, type BackendProfile } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Entrar — Agora Vai" }] }),
@@ -16,26 +17,44 @@ export const Route = createFileRoute("/login")({
 
 function Login() {
   const nav = useNavigate();
+  const { loginState, suppressNextAutoSync } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  type UserProfileResponse = {
-    name?: string;
-    isAdmin?: boolean;
-  };
+  async function fetchMyProfileWithRetry<T>(attempts = 2): Promise<T> {
+    let lastError: unknown;
+
+    for (let i = 0; i < attempts; i += 1) {
+      try {
+        return await fetchWithAuth<T>("/users/me");
+      } catch (error) {
+        lastError = error;
+        const is500 = error instanceof Error && error.message.includes("500");
+        const shouldRetry = is500 && i < attempts - 1;
+        if (!shouldRetry) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      }
+    }
+
+    throw lastError;
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      suppressNextAutoSync();
+      const credential = await signInWithEmailAndPassword(auth, email, password);
 
-      const profile = await fetchWithAuth<UserProfileResponse>("/users/me");
+      const profile = await fetchMyProfileWithRetry<BackendProfile>();
+
       console.log("Resposta do back-end (/users/me):", profile);
 
+      loginState(credential.user, profile);
+
       toast.success(`Bem-vinda(o) de volta${profile?.name ? `, ${profile.name}` : ""}!`);
-      nav({ to: profile?.isAdmin ? "/admin" : "/app" });
+      nav({ to: "/dashboard" });
     } catch (error) {
       console.error("Falha no fluxo de login:", error);
       const message = error instanceof Error ? error.message : "Erro ao entrar.";

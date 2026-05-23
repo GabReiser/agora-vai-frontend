@@ -6,15 +6,15 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Check, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { authService } from "@/services/auth";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/app/configuracoes")({ component: Configuracoes });
 
 function Configuracoes() {
   const [, force] = useState(0);
-  const user = authService.current();
-  if (!user) return null;
-  const isPro = user.plan === "pro";
+  const { profile, setProfile } = useAuth();
+  if (!profile) return null;
+  const isPro = profile.planType === "PRO";
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -26,8 +26,8 @@ function Configuracoes() {
       <section className="rounded-2xl border border-border bg-card p-6 space-y-4">
         <h3 className="font-display font-semibold">Perfil</h3>
         <div className="grid sm:grid-cols-2 gap-4">
-          <div className="space-y-2"><Label>Nome</Label><Input defaultValue={user.name} /></div>
-          <div className="space-y-2"><Label>E-mail</Label><Input defaultValue={user.email} /></div>
+          <div className="space-y-2"><Label>Nome</Label><Input defaultValue={profile.name} /></div>
+          <div className="space-y-2"><Label>E-mail</Label><Input defaultValue={profile.email} /></div>
         </div>
         <Button className="rounded-full" onClick={() => toast.success("Perfil atualizado.")}>Salvar alterações</Button>
       </section>
@@ -53,14 +53,22 @@ function Configuracoes() {
           {!isPro ? (
             <Button
               className="rounded-full h-11"
-              onClick={() => { authService.setPlan("pro"); toast.success("Bem-vindo ao Pro!"); force((x) => x + 1); }}
+              onClick={() => {
+                setProfile({ ...profile, planType: "PRO" });
+                toast.success("Bem-vindo ao Pro!");
+                force((x) => x + 1);
+              }}
             >
               <Sparkles className="size-4" /> Ativar Pro (demo)
             </Button>
           ) : (
             <Button
               variant="outline" className="rounded-full h-11"
-              onClick={() => { authService.setPlan("free"); toast("Voltou para o Free."); force((x) => x + 1); }}
+              onClick={() => {
+                setProfile({ ...profile, planType: "FREE" });
+                toast("Voltou para o Free.");
+                force((x) => x + 1);
+              }}
             >
               Voltar para o Free
             </Button>

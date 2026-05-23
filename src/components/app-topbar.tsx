@@ -10,9 +10,9 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { authService, type User } from "@/services/auth";
 import { useGamification } from "@/components/gamification-provider";
 import { TierBadge } from "@/components/tier-badge";
+import { type BackendProfile, useAuth } from "@/contexts/AuthContext";
 
 function XpProgress() {
   const { profile, tier, registerXpTarget } = useGamification();
@@ -62,11 +62,15 @@ function XpProgress() {
   );
 }
 
-export function AppTopbar({ user, title }: { user: User; title: string }) {
+export function AppTopbar({ profile, title }: { profile: BackendProfile; title: string }) {
   const nav = useNavigate();
   const { theme, toggle } = useTheme();
+  const { logout } = useAuth();
   const isDark = theme === "dark";
-  const isPro = user.plan === "pro";
+  const isPro = profile.planType === "PRO";
+  const safeName = (profile.name || "Usuário").trim() || "Usuário";
+  const safeEmail = profile.email || "-";
+  const initials = safeName.slice(0, 2).toUpperCase();
   return (
     <header className="h-16 border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30 flex items-center px-4 md:px-8 gap-4">
       <h1 className="font-display text-lg md:text-xl font-semibold tracking-tight">{title}</h1>
@@ -90,17 +94,17 @@ export function AppTopbar({ user, title }: { user: User; title: string }) {
             <Button variant="ghost" className="gap-2 pl-1 pr-3 rounded-full">
               <Avatar className="size-8">
                 <AvatarFallback className="bg-accent text-accent-foreground text-xs font-semibold">
-                  {user.name.slice(0, 2).toUpperCase()}
+                  {initials}
                 </AvatarFallback>
               </Avatar>
-              <span className="hidden sm:inline text-sm font-medium">{user.name}</span>
+              <span className="hidden sm:inline text-sm font-medium">{safeName}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>
               <div className="flex flex-col">
-                <span className="text-sm">{user.name}</span>
-                <span className="text-xs text-muted-foreground font-normal">{user.email}</span>
+                <span className="text-sm">{safeName}</span>
+                <span className="text-xs text-muted-foreground font-normal">{safeEmail}</span>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -112,7 +116,7 @@ export function AppTopbar({ user, title }: { user: User; title: string }) {
               {isDark ? "Modo claro" : "Modo escuro"}
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={async () => { await authService.logout(); nav({ to: "/login" }); }}
+              onClick={async () => { await logout(); nav({ to: "/login" }); }}
             >
               <LogOut className="size-4" /> Sair
             </DropdownMenuItem>

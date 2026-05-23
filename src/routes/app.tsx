@@ -4,7 +4,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { AppTopbar } from "@/components/app-topbar";
 import { GamificationProvider } from "@/components/gamification-provider";
 import { ChatAssistant } from "@/components/chat-assistant";
-import { authService, type User } from "@/services/auth";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/app")({
   component: AppLayout,
@@ -22,15 +22,15 @@ const titles: Record<string, string> = {
 function AppLayout() {
   const nav = useNavigate();
   const path = useRouterState({ select: (s) => s.location.pathname });
-  const [user, setUser] = useState<User | null>(null);
+  const { user, profile, loading } = useAuth();
 
   useEffect(() => {
-    const u = authService.current();
-    if (!u) { nav({ to: "/login" }); return; }
-    setUser(u);
-  }, [nav]);
+    if (!loading && !user) {
+      nav({ to: "/login" });
+    }
+  }, [loading, nav, user]);
 
-  if (!user) return null;
+  if (loading || !user || !profile) return null;
 
   const title = titles[path] ?? "Agora Vai";
 
@@ -39,7 +39,7 @@ function AppLayout() {
       <div className="min-h-screen flex bg-background items-start">
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0">
-          <AppTopbar user={user} title={title} />
+          <AppTopbar profile={profile} title={title} />
           <main className="flex-1 p-4 md:p-8">
             <Outlet />
           </main>

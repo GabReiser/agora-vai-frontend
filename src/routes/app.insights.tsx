@@ -7,8 +7,8 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { insightsService, type InsightTone } from "@/services/insights";
-import { authService } from "@/services/auth";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/app/insights")({ component: Insights });
 
@@ -28,8 +28,8 @@ const banks = [
 ];
 
 function Insights() {
-  const user = authService.current();
-  const isPro = user?.plan === "pro";
+  const { profile, setProfile } = useAuth();
+  const isPro = profile?.planType === "PRO";
   const [, force] = useState(0);
   const { data: insights = [] } = useQuery({
     queryKey: ["insights"], queryFn: () => insightsService.list(), enabled: isPro,
@@ -52,7 +52,12 @@ function Insights() {
             <Link to="/app/configuracoes">Conhecer o Plano Pro</Link>
           </Button>
           <button
-            onClick={() => { authService.setPlan("pro"); toast.success("Modo demo: Pro ativado!"); force((x) => x + 1); }}
+            onClick={() => {
+              if (!profile) return;
+              setProfile({ ...profile, planType: "PRO" });
+              toast.success("Modo demo: Pro ativado!");
+              force((x) => x + 1);
+            }}
             className="block text-xs text-muted-foreground mt-4 mx-auto hover:underline"
           >
             (demo) ativar Pro agora

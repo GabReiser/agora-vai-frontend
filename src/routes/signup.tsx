@@ -5,7 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Sprout } from "lucide-react";
 import { toast } from "sonner";
-import { authService } from "@/services/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/config/firebase";
+import { fetchWithAuth } from "@/lib/api";
+import { useAuth, type BackendProfile } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "Criar conta — Agora Vai" }] }),
@@ -14,20 +17,86 @@ export const Route = createFileRoute("/signup")({
 
 function Signup() {
   const nav = useNavigate();
+  const { loginState, suppressNextAutoSync } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  async function fetchMyProfileWithRetry<T>(attempts = 2): Promise<T> {
+    let lastError: unknown;
+
+    for (let i = 0; i < attempts; i += 1) {
+      try {
+        return await fetchWithAuth<T>("/users/me");
+      } catch (error) {
+        lastError = error;
+        const is500 = error instanceof Error && error.message.includes("500");
+        const shouldRetry = is500 && i < attempts - 1;
+        if (!shouldRetry) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      }
+    }
+
+    throw lastError;
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+
     try {
-      await authService.signup(name, email, password);
+      suppressNextAutoSync();
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+
+      await fetchMyProfileWithRetry<unknown>();
+
+      await fetchWithAuth<unknown>("/users/me", {
+        method: "PATCH",
+        body: JSON.stringify({ name }),
+      });
+
+      const profile = await fetchMyProfileWithRetry<BackendProfile>();
+      console.log("Resposta do back-end (/users/me) após PATCH:", profile);
+
+      loginState(credential.user, profile);
+
       toast.success("Conta criada com sucesso!");
-      nav({ to: "/app" });
-    } catch {
-      toast.error("Erro ao criar conta.");
+      nav({ to: "/dashboard" });
+    } catch (error: unknown) {
+      console.error("Falha no fluxo de cadastro:", error);
+
+      const errorCode =
+        typeof error === "object" && error !== null && "code" in error
+          ? String((error as { code?: string }).code)
+          : "";
+
+      if (errorCode === "auth/email-already-in-use") {
+        try {
+          suppressNextAutoSync();
+          const credential = await signInWithEmailAndPassword(auth, email, password);
+
+          await fetchMyProfileWithRetry<unknown>();
+
+          await fetchWithAuth<unknown>("/users/me", {
+            method: "PATCH",
+            body: JSON.stringify({ name }),
+          });
+
+          const profile = await fetchMyProfileWithRetry<BackendProfile>();
+          console.log("Self-healing de cadastro concluído:", profile);
+
+          loginState(credential.user, profile);
+
+          toast.success("Conta recuperada com sucesso!");
+          nav({ to: "/dashboard" });
+        } catch (recoveryError) {
+          console.error("Falha no self-healing de cadastro:", recoveryError);
+          toast.error("Este e-mail já está em uso.");
+        }
+      } else {
+        toast.error("Erro ao criar conta.");
+      }
     } finally {
       setLoading(false);
     }
