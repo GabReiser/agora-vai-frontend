@@ -15,6 +15,7 @@ import {
 import { auth } from "@/config/firebase";
 import { fetchWithAuth } from "@/lib/api";
 import { useAuth, type BackendProfile } from "@/contexts/AuthContext";
+import { SocialAuthButtons } from "@/components/social-auth-buttons";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Entrar — Agora Vai" }] }),
@@ -179,43 +180,6 @@ function Login() {
           <div>
             <h1 className="font-display text-3xl font-bold tracking-tight">Entrar</h1>
             <p className="text-sm text-muted-foreground mt-1">Acesse sua conta para continuar.</p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              disabled={loading}
-              onClick={handleGoogleLogin}
-              className="h-11 bg-card/40 border-border/60 hover:bg-card/80 hover:border-primary/40"
-            >
-              <GoogleIcon />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={loading}
-              onClick={handleMicrosoftLogin}
-              className="h-11 bg-card/40 border-border/60 hover:bg-card/80 hover:border-primary/40"
-            >
-              <MicrosoftIcon />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={loading}
-              onClick={handleAppleLogin}
-              className="h-11 bg-card/40 border-border/60 hover:bg-card/80 hover:border-primary/40"
-            >
-              <AppleIcon />
-            </Button>
-          </div>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border/60" /></div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">ou continue com</span>
-            </div>
           </div>
 
           <div className="space-y-2">
